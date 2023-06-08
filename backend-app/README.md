@@ -1,7 +1,7 @@
 # Backend - application 
 
 ## add this in package.json
-### `"scripts": {"start": "node server.js","dev": "nodemon server.js"`
+### `"scripts": {"start": "node server.js","dev": "nodemon server.js"}`
 ## Available Scripts
 
 In the project directory, you can run:
