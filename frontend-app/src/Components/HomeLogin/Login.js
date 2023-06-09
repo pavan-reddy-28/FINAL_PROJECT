@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
 
 const LoginPageContainer = styled.div`
   display: flex;
@@ -52,37 +53,24 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (isLoading) {
-      // Simulating an API request delay
-      const timer = setTimeout(() => {
-        // Perform login logic here (replace with your actual backend call)
-        console.log('Email:', email);
-        console.log('Password:', password);
-        setIsLoading(false);
-      }, 2000);
-
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [isLoading, email, password]);
+  const navigate = useNavigate();
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     if (!email || !password) {
       setError('Please enter both email and password.');
       return;
     }
-
-    setIsLoading(true);
+    console.log("log -66 ");
+    navigate("/about");
+    
   };
 
   return (
     <LoginPageContainer>
-      <LoginForm onSubmit={handleSubmit}>
+      <LoginForm onSubmit={(e)=>handleSubmit(e)}>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <InputField
           type="email"
