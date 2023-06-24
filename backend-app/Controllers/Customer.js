@@ -4,8 +4,8 @@ async function validateCustomer(customerData) {
   const {mail,pass} = customerData
   console.log({...customerData})
   const data = await dbValidateCustomer(customerData)
-  .then( (data) => data)
-  .catch(data => null);
+  .then( (data) => data  == null ? "error" : data)
+  .catch(data => "error");
     return data;
 }
 

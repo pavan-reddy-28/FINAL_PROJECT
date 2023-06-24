@@ -1,96 +1,147 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import axios from 'axios';
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Snackbar,
+} from '@mui/material';
+import { Cookies } from 'react-cookie';
+import { styled } from '@mui/system';
+import { useNavigate,NavLink } from 'react-router-dom';
 
-const LoginPageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-`;
+const LoginForm = styled('form')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  marginTop: theme.spacing(4),
+}));
 
-const LoginForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 300px;
-  padding: 20px;
-  background-color: #f2f2f2;
-  border-radius: 4px;
-`;
+const InputField = styled(TextField)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+}));
 
-const InputField = styled.input`
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid ${(props) => (props.error ? 'red' : '#ccc')};
-  border-radius: 4px;
-  outline: none;
-
-  &:focus {
-    border-color: ${(props) => (props.error ? 'red' : '#4caf50')};
-  }
-`;
-
-const SubmitButton = styled.button`
-  width: 100%;
-  padding: 10px;
-  background-color: ${(props) => (props.disabled ? '#ccc' : '#4caf50')};
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
-`;
-
-const ErrorMessage = styled.p`
-  margin: 0;
-  color: red;
-`;
+const SignInButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  width: '100%',
+}));
 
 const Login = () => {
+  const navigate = useNavigate();
+  const cookies = new Cookies();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  
+  const [error, setError] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
   
-    if (!email || !password) {
-      setError('Please enter both email and password.');
+    if (email.trim() === '' || password.trim() === '') {
+      setError(true);
+      setAlertOpen(true);
       return;
     }
-    console.log("log -66 ");
-    navigate("/about");
+  
+    try {
+
+      let isValidCredentials = false
+      if(email == "admin@gmail.com"){
+       
+        const response = await axios.post('http://localhost:8000/admin', { email, password })
+        .then( e => e.data.data);
+        console.log("data from the server : ",response)
+        isValidCredentials = response == "error" ? false :true
+        if (isValidCredentials) {
+          await cookies.set("admin", response._id, { path: '/' });
+     
+          console.log("hello user log in")
+          navigate('/adminDashboard');
+        }
+      }else{
+        const response = await axios.post('http://localhost:8000/customer', { email, password })
+      .then( e => e.data.data);
+
+      isValidCredentials = response == "error" ? false :true
+        if (isValidCredentials) {
+        await cookies.set("customer", response._id, { path: '/' });
+          cookies.set("address", response.address, { path: '/' });
+         
+          navigate('/dashboard');
+        }
+      }
     
+      
+       if(!isValidCredentials) {
+        setError(true);
+        setAlertOpen(true);
+  
+        // Reset the form after 10 seconds
+        setTimeout(() => {
+          setError(false);
+          setEmail('');
+          setPassword('');
+          setAlertOpen(false);
+        }, 10000);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle the error as needed
+    }
+  };
+
+  const handleAlertClose = () => {
+    setAlertOpen(false);
   };
 
   return (
-    <LoginPageContainer>
-      <LoginForm onSubmit={(e)=>handleSubmit(e)}>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+    <Container maxWidth="sm">
+      <Typography variant="h4" align="center" gutterBottom>
+        Login
+      </Typography>
+      <LoginForm onSubmit={handleSignIn}>
         <InputField
+          label="Email"
+          variant="outlined"
           type="email"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          error={error}
+          error={error && email.trim() === ''}
+          fullWidth
+          required
         />
         <InputField
+          label="Password"
+          variant="outlined"
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          error={error}
+          error={error && password.trim() === ''}
+          fullWidth
+          required
         />
-        <SubmitButton type="submit" disabled={isLoading}>
-          {isLoading ? 'Logging in...' : 'Login'}
-        </SubmitButton>
+        <div>
+        <NavLink
+          to="/userRegistration"
+     
+>
+  Register New Customer
+</NavLink>;
+        </div>
+        <SignInButton variant="contained" color="primary" type="submit">
+          Sign In
+        </SignInButton>
       </LoginForm>
-    </LoginPageContainer>
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={10000}
+        onClose={handleAlertClose}
+        message="Please enter valid details."
+      />
+    </Container>
   );
 };
 

@@ -2,10 +2,10 @@ const { dbValidateAdmin,dbRegisterAdmin } = require("../DAO/dbconnect");
 
 async function validateAdmin(adminData) {
   const {mail,pass} = adminData
-  console.log({...adminData})
+  console.log("admin  login data : ",{...adminData})
   const data = await dbValidateAdmin(adminData)
-  .then( (data) => data)
-  .catch(data => null);
+  .then( (data) => data  == null ? "error" : data)
+  .catch(data => "error");
 console.log(data)
   return data;
 }

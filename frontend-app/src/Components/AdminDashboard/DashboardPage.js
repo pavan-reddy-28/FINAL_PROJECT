@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import RecipeReviewCard from '../DashboardCards/Index'
+import RecipeReviewCard from '../AdminDashboardCards/Index'
 import {useDispatch, useSelector} from 'react-redux'
 import { getProducts } from '../../redux/actions/productActions';
 
@@ -10,7 +10,7 @@ margin-left: 240px;
 position: absolute;
 `
 
-function DashboardPage() {
+function DashboardPageAdmin() {
   const dispatch = useDispatch();
   
   React.useEffect(()=>{
@@ -29,4 +29,4 @@ function DashboardPage() {
   )
 }
 
-export default DashboardPage
+export default DashboardPageAdmin

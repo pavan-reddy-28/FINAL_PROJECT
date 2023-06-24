@@ -1,4 +1,5 @@
 import React,{useState} from 'react';
+import { Cookies } from 'react-cookie';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -35,40 +36,38 @@ const NavItem = styled.li`
   }
 `;
 
-const SideNav = () => {
+const SideNavCustomer = () => {
+  
+  const cookies = new Cookies();
+
+  console.log("cookies data : ",cookies.get('customer'))
     const [pathname, setpathname] = useState(window.location.pathname.split("/")[1])
   return (
     <SideNavContainer>
-      <NavList>
+      {
+         
+        <NavList>
       <NavItem>
           <NavLink   to="/dashboard" className={pathname == "dashboard" ? "active":""}>
             Home
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink  to="/addProducts" className={pathname == "addProducts" ? "active":""}>
-            Add Products
-          </NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink  to="/updateProducts" className={pathname == "updateProducts" ? "active":""}>
-            Update Products
-          </NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink to="/orders" className={pathname == "orders" ? "active":""}>
+          <NavLink to="/customerOrders" className={pathname == "orders" ? "active":""}>
             Orders
           </NavLink>
         </NavItem>
-        <NavItem>
-          <NavLink  to="/delivery" className={pathname == "delivery" ? "active":""}>
-            Delivery
-          </NavLink>
-        </NavItem>
+        
       </NavList>
+      
+      }
+
+
+
+      
     </SideNavContainer>
   );
 };
 
 
-export default SideNav
+export default SideNavCustomer

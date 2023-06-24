@@ -8,7 +8,9 @@ const PRODUCTS = "products"
 const ORDERPRODUCTSDATA = "orderProductsData"
 const DELIVERY = "delivery"
 const CANCEL = "cancel"
-
+const CHUNKS = "uploads.chunks"
+const FILES = "uploads.files"
+const ORDERDETAILS = "orderDetails"
 module.exports = {
     DATABASE,
     ADDRESS,
@@ -19,5 +21,8 @@ module.exports = {
     PRODUCTS,
     ORDERPRODUCTSDATA,
     DELIVERY,
-    CANCEL
+    CANCEL,
+    CHUNKS,
+    FILES,
+    ORDERDETAILS
   };

@@ -1,4 +1,4 @@
-const {  dbAddProduct } = require("../DAO/dbconnect");
+const {  dbAddProduct, dbUpdateProduct, dbGetAllProducts,dbGetAllProductsWithImages } = require("../DAO/dbconnect");
 const multer  = require('multer');
 const { GridFsStorage } = require("multer-gridfs-storage");
 
@@ -9,14 +9,15 @@ const storage = new GridFsStorage({
   url,
   file: (req, file) => {
     return {
-      bucketName: 'uploads'
+      bucketName: 'uploads',
+      filename:file.originalname,
     };
   }
 });
 const ImageUpload = multer({ storage });
 
 async function addProduct(productData) {
-  const { description,img,price,quantity,timestamp,title,company  } = productData
+  const { description,img,price,quantity,timestamp,updatedTimestamp,title,company,canReturn  } = productData
   console.log("add product page : ",{...productData})
   const data = await dbAddProduct(productData)
   .then( (data) => data)
@@ -24,7 +25,35 @@ async function addProduct(productData) {
   return data;
 }
 
+async function updateProduct(productData) {
+  const {price,quantity,updatedTimestamp,productId ,description } = productData
+  console.log("update product page : ",{...productData})
+  const data = await dbUpdateProduct(productData)
+  .then( (data) => data)
+  .catch(data => null);
+  return data;
+}
+async function getAllProducts() {
+  
+  const data = await dbGetAllProducts()
+  .then( (data) => data == null ? "error" : data)
+  .catch(data => null);
+  return data;
+}
+
+
+async function getAllProductsWithImages() {
+  
+  const data = await dbGetAllProductsWithImages()
+  .then( (data) => data)
+  .catch(data => null);
+  return data;
+}
+
 module.exports = {
   addProduct,
-  ImageUpload
+  ImageUpload,
+  updateProduct,
+  getAllProducts,
+  getAllProductsWithImages
 }
